@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<p class="container">
+    <h2>Employees Record</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" id="btnAddNewEmployee">
+        Add New Employee
+    </button><br /><br />
+    <table class="table table-bordered table-hover" id="dataTableData">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+            <!-- Employee records will be populated here -->
+        </tbody>
+    </table>
+</p>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form id="employeeForm">
+                    <div class="form-group">
+                        <label for="EmployeeId">ID</label>
+                        <input type="text" class="form-control" id="txtEmployeeID" placeholder="Id" disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="txtName" placeholder="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Age">Age</label>
+                        <input type="text" class="form-control" id="txtAge" placeholder="Age" />
+                    </div>
+                    <div class="form-group">
+                        <label for="State">State</label>
+                        <input type="text" class="form-control" id="txtState" placeholder="State" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Country">Country</label>
+                        <input type="text" class="form-control" id="txtCountry" placeholder="Country" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnSaveEmployee">Save</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCloseEmployee">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/Home/index.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '#btnAddNewEmployee', function () {
+            $('#myModal').modal('show');
+            $('#btnUpdate').hide();
+            $('#btnSaveEmployee').show();
+            closeForm();
+        });
+        //$(document).on('click', '#btnSaveEmployee', function () {
+        //    $.ajax({
+        //        type: "GET",
+        //        url: `Home/AddNewEmployee?empID=${employeeID}&empName=${employeeName}`,  //query param
+        //        success: function (response) {
+        //        },
+        //        error: function (xhr, status, error) {
+        //        }
+        //    });
+        //});
+        $(document).on('click', '#btnSaveEmployee', function () {
+            var Empdata = {
+                employeeID: $('#txtEmployeeID').val(),
+                name: $('#txtName').val(),
+                age: $('#txtAge').val(),
+                state: $('#txtState').val(),
+                country: $('#txtCountry').val()
+            }
+            /*console.log(Empdata);*/
+            $.ajax({
+                url: '/Home/Add',
+                type: 'POST',
+                data: JSON.stringify(Empdata),
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+
+                success: function (data) {
+                    loadData();
+                    $('#myModal').modal('hide');
+                    clearTextBox(); // Move this here
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });           
+        });
+    });
+</script>
